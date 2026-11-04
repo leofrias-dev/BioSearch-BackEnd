@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 
 void main() {
     ArrayList<Animal> catalogo = new ArrayList<>();
@@ -6,7 +7,9 @@ void main() {
     catalogo.add(new Animal(2L, "Sabiá-laranjeira", "Turdus rufiventris", 95.5));
     catalogo.add(new Animal(3L, "Leão", "Panthera leo", 95.5));
 
-    long idBusca = 2L;
+    Scanner scanner = new Scanner(System.in);
+    System.out.print("Digite o ID do animal que deseja buscar: ");
+    long idBusca = scanner.nextLong();
     for (Animal animal : catalogo) {
         if (animal.getId() == idBusca) {
             System.out.println("🔍 Resultado da Busca:");
@@ -14,4 +17,5 @@ void main() {
             break;
         }
     }
+    scanner.close();
 }

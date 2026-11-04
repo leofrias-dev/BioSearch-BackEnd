@@ -6,7 +6,12 @@ void main() {
     catalogo.add(new Animal(2L, "Sabiá-laranjeira", "Turdus rufiventris", 95.5));
     catalogo.add(new Animal(3L, "Leão", "Panthera leo", 95.5));
 
+    long idBusca = 2L;
     for (Animal animal : catalogo) {
-        animal.exibirFichaTecnica();
+        if (animal.getId() == idBusca) {
+            System.out.println("🔍 Resultado da Busca:");
+            animal.exibirFichaTecnica();
+            break;
+        }
     }
 }

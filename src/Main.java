@@ -8,13 +8,20 @@ void main() {
     catalogo.add(new Animal(3L, "Leão", "Panthera leo", 95.5));
 
     Scanner scanner = new Scanner(System.in);
-    System.out.print("Digite o ID do animal que deseja buscar: ");
-    long idBusca = scanner.nextLong();
-    for (Animal animal : catalogo) {
-        if (animal.getId() == idBusca) {
-            System.out.println("🔍 Resultado da Busca:");
-            animal.exibirFichaTecnica();
-            break;
+    boolean encontrou = false;
+    while (!encontrou) {
+        System.out.print("Digite o ID do animal que deseja buscar: ");
+        long idBusca = scanner.nextLong();
+        for (Animal animal : catalogo) {
+            if (animal.getId() == idBusca) {
+                System.out.println("🔍 Resultado da Busca:");
+                animal.exibirFichaTecnica();
+                encontrou = true;
+                break;
+            }
+        }
+        if (!encontrou) {
+            System.out.println("❌ Espécie não catalogada no BioSearch.");
         }
     }
     scanner.close();

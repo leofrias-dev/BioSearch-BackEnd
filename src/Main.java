@@ -14,6 +14,7 @@ void main() {
         System.out.println("2 - Buscar Animal por ID");
         System.out.println("3 - Cadastrar Novo Animal");
         System.out.println("4 - Remover Animal");
+        System.out.println("5 - Editar Animal");
         System.out.println("0 - Sair");
         int opcao = scanner.nextInt();
         scanner.nextLine();
@@ -53,6 +54,29 @@ void main() {
                 boolean removido = catalogo.removeIf(animal -> animal.getId() == idRemover);
                 if (removido) {
                     System.out.println("🗑️ Animal removido com sucesso!");
+                } else {
+                    System.out.println("ID não encontrado no sistema.");
+                }
+                break;
+            case 5:
+                System.out.print("Digite o ID do animal que deseja editar: ");
+                long idEditar = scanner.nextLong();
+                scanner.nextLine();
+                Animal animalEncontrado = null;
+                for (Animal animal : catalogo) {
+                    if (animal.getId() == idEditar) {
+                        animalEncontrado = animal;
+                        break;
+                    }
+                }
+                if (animalEncontrado != null) {
+                    System.out.print("Novo Nome Comum: ");
+                    String novoNomeComum = scanner.nextLine();
+                    System.out.print("Novo Nome Científico: ");
+                    String novoNomeCientifico = scanner.nextLine();
+                    animalEncontrado.setNomeComum(novoNomeComum);
+                    animalEncontrado.setNomeCientifico(novoNomeCientifico);
+                    System.out.println("✏️ Animal atualizado com sucesso!");
                 } else {
                     System.out.println("ID não encontrado no sistema.");
                 }

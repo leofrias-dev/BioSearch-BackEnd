@@ -13,6 +13,7 @@ void main() {
         System.out.println("1 - Listar Catálogo Completo");
         System.out.println("2 - Buscar Animal por ID");
         System.out.println("3 - Cadastrar Novo Animal");
+        System.out.println("4 - Remover Animal");
         System.out.println("0 - Sair");
         int opcao = scanner.nextInt();
         scanner.nextLine();
@@ -45,6 +46,16 @@ void main() {
                 Animal novoAnimal = new Animal(catalogo.size() + 1L, nomeComum, nomeCientifico, 0.0);
                 catalogo.add(novoAnimal);
                 System.out.println("✅ Animal cadastrado com sucesso!");
+                break;
+            case 4:
+                System.out.print("Digite o ID do animal que deseja excluir: ");
+                long idRemover = scanner.nextLong();
+                boolean removido = catalogo.removeIf(animal -> animal.getId() == idRemover);
+                if (removido) {
+                    System.out.println("🗑️ Animal removido com sucesso!");
+                } else {
+                    System.out.println("ID não encontrado no sistema.");
+                }
                 break;
             case 0:
                 System.out.println("A encerrar o BioSearch...");

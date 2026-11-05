@@ -8,20 +8,49 @@ void main() {
     catalogo.add(new Animal(3L, "Leão", "Panthera leo", 95.5));
 
     Scanner scanner = new Scanner(System.in);
-    boolean encontrou = false;
-    while (!encontrou) {
-        System.out.print("Digite o ID do animal que deseja buscar: ");
-        long idBusca = scanner.nextLong();
-        for (Animal animal : catalogo) {
-            if (animal.getId() == idBusca) {
-                System.out.println("🔍 Resultado da Busca:");
-                animal.exibirFichaTecnica();
-                encontrou = true;
+    menu: while (true) {
+        System.out.println("--- Menu BioSearch ---");
+        System.out.println("1 - Listar Catálogo Completo");
+        System.out.println("2 - Buscar Animal por ID");
+        System.out.println("3 - Cadastrar Novo Animal");
+        System.out.println("0 - Sair");
+        int opcao = scanner.nextInt();
+        scanner.nextLine();
+
+        switch (opcao) {
+            case 1:
+                for (Animal animal : catalogo) {
+                    animal.exibirFichaTecnica();
+                }
                 break;
-            }
-        }
-        if (!encontrou) {
-            System.out.println("❌ Espécie não catalogada no BioSearch.");
+            case 2:
+                System.out.print("Digite o ID do animal para busca: ");
+                long idBusca = scanner.nextLong();
+                for (Animal animal : catalogo) {
+                    if (animal.getId() == idBusca) {
+                        System.out.println("🔍 Resultado da Busca:");
+                        animal.exibirFichaTecnica();
+                        break;
+                    }
+                }
+                if (catalogo.stream().noneMatch(animal -> animal.getId() == idBusca)) {
+                    System.out.println("❌ Espécie não catalogada no BioSearch.");
+                }
+                break;
+            case 3:
+                System.out.print("Nome Comum: ");
+                String nomeComum = scanner.nextLine();
+                System.out.print("Nome Científico: ");
+                String nomeCientifico = scanner.nextLine();
+                Animal novoAnimal = new Animal(catalogo.size() + 1L, nomeComum, nomeCientifico, 0.0);
+                catalogo.add(novoAnimal);
+                System.out.println("✅ Animal cadastrado com sucesso!");
+                break;
+            case 0:
+                System.out.println("A encerrar o BioSearch...");
+                break menu;
+            default:
+                System.out.println("Opção inválida");
         }
     }
     scanner.close();

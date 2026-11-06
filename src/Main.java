@@ -1,12 +1,7 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 
 void main() {
-    ArrayList<Animal> catalogo = new ArrayList<>();
-    catalogo.add(new Animal(1L, "Vespa Oleira", "Sceliphron caementarium", 95.5));
-    catalogo.add(new Animal(2L, "Sabiá-laranjeira", "Turdus rufiventris", 95.5));
-    catalogo.add(new Animal(3L, "Leão", "Panthera leo", 95.5));
-
+    CatalogoService service = new CatalogoService();
     Scanner scanner = new Scanner(System.in);
     menu: while (true) {
         System.out.println("--- Menu BioSearch ---");
@@ -21,21 +16,16 @@ void main() {
 
         switch (opcao) {
             case 1:
-                for (Animal animal : catalogo) {
-                    animal.exibirFichaTecnica();
-                }
+                service.listarAnimais();
                 break;
             case 2:
                 System.out.print("Digite o ID do animal para busca: ");
                 long idBusca = scanner.nextLong();
-                for (Animal animal : catalogo) {
-                    if (animal.getId() == idBusca) {
-                        System.out.println("🔍 Resultado da Busca:");
-                        animal.exibirFichaTecnica();
-                        break;
-                    }
-                }
-                if (catalogo.stream().noneMatch(animal -> animal.getId() == idBusca)) {
+                Animal animalEncontrado = service.buscarPorId(idBusca);
+                if (animalEncontrado != null) {
+                    System.out.println("🔍 Resultado da Busca:");
+                    animalEncontrado.exibirFichaTecnica();
+                } else {
                     System.out.println("❌ Espécie não catalogada no BioSearch.");
                 }
                 break;
@@ -44,14 +34,13 @@ void main() {
                 String nomeComum = scanner.nextLine();
                 System.out.print("Nome Científico: ");
                 String nomeCientifico = scanner.nextLine();
-                Animal novoAnimal = new Animal(catalogo.size() + 1L, nomeComum, nomeCientifico, 0.0);
-                catalogo.add(novoAnimal);
+                service.cadastrarAnimal(nomeComum, nomeCientifico);
                 System.out.println("✅ Animal cadastrado com sucesso!");
                 break;
             case 4:
                 System.out.print("Digite o ID do animal que deseja excluir: ");
                 long idRemover = scanner.nextLong();
-                boolean removido = catalogo.removeIf(animal -> animal.getId() == idRemover);
+                boolean removido = service.removerAnimal(idRemover);
                 if (removido) {
                     System.out.println("🗑️ Animal removido com sucesso!");
                 } else {
@@ -62,20 +51,12 @@ void main() {
                 System.out.print("Digite o ID do animal que deseja editar: ");
                 long idEditar = scanner.nextLong();
                 scanner.nextLine();
-                Animal animalEncontrado = null;
-                for (Animal animal : catalogo) {
-                    if (animal.getId() == idEditar) {
-                        animalEncontrado = animal;
-                        break;
-                    }
-                }
-                if (animalEncontrado != null) {
+                if (service.buscarPorId(idEditar) != null) {
                     System.out.print("Novo Nome Comum: ");
                     String novoNomeComum = scanner.nextLine();
                     System.out.print("Novo Nome Científico: ");
                     String novoNomeCientifico = scanner.nextLine();
-                    animalEncontrado.setNomeComum(novoNomeComum);
-                    animalEncontrado.setNomeCientifico(novoNomeCientifico);
+                    service.editarAnimal(idEditar, novoNomeComum, novoNomeCientifico);
                     System.out.println("✏️ Animal atualizado com sucesso!");
                 } else {
                     System.out.println("ID não encontrado no sistema.");

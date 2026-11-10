@@ -4,6 +4,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,12 +33,12 @@ public class CatalogoService {
     }
 
     public void buscarPorNome(String termo) {
-        String termoLowercase = termo.toLowerCase();
+        String termoLowercase = removerAcentos(termo).toLowerCase();
         boolean encontrado = false;
 
         for (Animal animal : catalogo) {
-            if (animal.getNomeComum().toLowerCase().contains(termoLowercase)
-                    || animal.getNomeCientifico().toLowerCase().contains(termoLowercase)) {
+            if (removerAcentos(animal.getNomeComum()).toLowerCase().contains(termoLowercase)
+                    || removerAcentos(animal.getNomeCientifico()).toLowerCase().contains(termoLowercase)) {
                 animal.exibirFichaTecnica();
                 encontrado = true;
             }
@@ -46,6 +47,11 @@ public class CatalogoService {
         if (!encontrado) {
             System.out.println("Nenhum animal encontrado com esse termo.");
         }
+    }
+
+    private String removerAcentos(String str) {
+        return Normalizer.normalize(str, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
     }
 
     public void cadastrarAnimal(String nomeComum, String nomeCientifico) {

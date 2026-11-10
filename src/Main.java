@@ -11,6 +11,7 @@ void main() {
             System.out.println("3 - Cadastrar Novo Animal");
             System.out.println("4 - Remover Animal");
             System.out.println("5 - Editar Animal");
+            System.out.println("6 - Buscar Animal por Nome");
             System.out.println("0 - Sair");
             int opcao = scanner.nextInt();
             scanner.nextLine();
@@ -62,6 +63,11 @@ void main() {
                     } else {
                         System.out.println("ID não encontrado no sistema.");
                     }
+                    break;
+                case 6:
+                    System.out.print("Digite um termo de busca (nome comum ou científico): ");
+                    String termoBusca = scanner.nextLine();
+                    service.buscarPorNome(termoBusca);
                     break;
                 case 0:
                     System.out.println("A encerrar o BioSearch...");

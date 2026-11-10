@@ -31,6 +31,23 @@ public class CatalogoService {
         return null;
     }
 
+    public void buscarPorNome(String termo) {
+        String termoLowercase = termo.toLowerCase();
+        boolean encontrado = false;
+
+        for (Animal animal : catalogo) {
+            if (animal.getNomeComum().toLowerCase().contains(termoLowercase)
+                    || animal.getNomeCientifico().toLowerCase().contains(termoLowercase)) {
+                animal.exibirFichaTecnica();
+                encontrado = true;
+            }
+        }
+
+        if (!encontrado) {
+            System.out.println("Nenhum animal encontrado com esse termo.");
+        }
+    }
+
     public void cadastrarAnimal(String nomeComum, String nomeCientifico) {
         long novoId = catalogo.stream()
                 .mapToLong(animal -> animal.getId())
@@ -72,11 +89,19 @@ public class CatalogoService {
 
     private void carregarDados() {
         if (Files.notExists(ARQUIVO_DADOS)) {
+            adicionarAnimaisPadrao();
+            salvarDados();
             return;
         }
 
         try {
             List<String> linhas = Files.readAllLines(ARQUIVO_DADOS, StandardCharsets.UTF_8);
+            if (linhas.stream().allMatch(String::isBlank)) {
+                adicionarAnimaisPadrao();
+                salvarDados();
+                return;
+            }
+
             for (int i = 0; i < linhas.size(); i++) {
                 String[] atributos = linhas.get(i).split(";", -1);
                 if (atributos.length != 3) {
@@ -95,5 +120,11 @@ public class CatalogoService {
         } catch (IOException e) {
             throw new UncheckedIOException("Não foi possível carregar os dados dos animais.", e);
         }
+    }
+
+    private void adicionarAnimaisPadrao() {
+        catalogo.add(new Animal(1L, "Vespa Oleira", "Trypoxylon politum", 0.0));
+        catalogo.add(new Animal(2L, "Sabiá-laranjeira", "Turdus rufiventris", 0.0));
+        catalogo.add(new Animal(3L, "Leão", "Panthera leo", 0.0));
     }
 }

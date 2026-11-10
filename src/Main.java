@@ -3,6 +3,8 @@ import java.util.Scanner;
 void main() {
     CatalogoService service = new CatalogoService();
     Scanner scanner = new Scanner(System.in);
+    System.out.println("🌿 === BIOSEARCH - Sistema de Gestão Biológica === 🌿");
+    System.out.println("---------------------------------------------------");
     menu: while (true) {
         try {
             System.out.println("--- Menu BioSearch ---");

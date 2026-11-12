@@ -1,3 +1,8 @@
+package br.com.biosearch.service;
+
+import br.com.biosearch.model.Animal;
+import org.springframework.stereotype.Service;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -6,80 +11,76 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
+@Service
 public class CatalogoService {
     private static final Path ARQUIVO_DADOS = Path.of("animais.csv");
-    private final ArrayList<Animal> catalogo;
+    private final ArrayList<Animal> catalogo = new ArrayList<>();
 
     public CatalogoService() {
-        catalogo = new ArrayList<>();
         carregarDados();
     }
 
-    public void listarAnimais() {
-        for (Animal animal : catalogo) {
-            animal.exibirFichaTecnica();
-        }
+    public synchronized List<Animal> listarAnimais() {
+        return catalogo.stream()
+                .sorted(Comparator.comparing(Animal::getNomeComum, String.CASE_INSENSITIVE_ORDER))
+                .toList();
     }
 
-    public Animal buscarPorId(long id) {
-        for (Animal animal : catalogo) {
-            if (animal.getId() == id) {
-                return animal;
-            }
-        }
-        return null;
+    public synchronized Animal buscarPorId(long id) {
+        return catalogo.stream()
+                .filter(animal -> animal.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
 
-    public void buscarPorNome(String termo) {
-        String termoLowercase = removerAcentos(termo).toLowerCase();
-        boolean encontrado = false;
-
-        for (Animal animal : catalogo) {
-            if (removerAcentos(animal.getNomeComum()).toLowerCase().contains(termoLowercase)
-                    || removerAcentos(animal.getNomeCientifico()).toLowerCase().contains(termoLowercase)) {
-                animal.exibirFichaTecnica();
-                encontrado = true;
-            }
-        }
-
-        if (!encontrado) {
-            System.out.println("Nenhum animal encontrado com esse termo.");
-        }
+    public synchronized List<Animal> buscarPorNome(String termo) {
+        String termoNormalizado = normalizar(termo);
+        return catalogo.stream()
+                .filter(animal -> normalizar(animal.getNomeComum()).contains(termoNormalizado)
+                        || normalizar(animal.getNomeCientifico()).contains(termoNormalizado))
+                .sorted(Comparator.comparing(Animal::getNomeComum, String.CASE_INSENSITIVE_ORDER))
+                .toList();
     }
 
-    private String removerAcentos(String str) {
-        return Normalizer.normalize(str, Normalizer.Form.NFD)
-                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
-    }
-
-    public void cadastrarAnimal(String nomeComum, String nomeCientifico) {
+    public synchronized Animal cadastrarAnimal(String nomeComum, String nomeCientifico) {
         long novoId = catalogo.stream()
-                .mapToLong(animal -> animal.getId())
+                .mapToLong(Animal::getId)
                 .max()
                 .orElse(0L) + 1L;
-        Animal novoAnimal = new Animal(novoId, nomeComum, nomeCientifico, 0.0);
+        Animal novoAnimal = new Animal(novoId, nomeComum.trim(), nomeCientifico.trim(), 0.0);
         catalogo.add(novoAnimal);
         salvarDados();
+        return novoAnimal;
     }
 
-    public boolean removerAnimal(long id) {
-        boolean removido = catalogo.removeIf(animal -> animal.getId() == id);
+    public synchronized Animal editarAnimal(long id, String novoNomeComum, String novoNomeCientifico) {
+        Animal animal = buscarPorId(id);
+        if (animal == null) {
+            return null;
+        }
+
+        animal.setNomeComum(novoNomeComum.trim());
+        animal.setNomeCientifico(novoNomeCientifico.trim());
         salvarDados();
+        return animal;
+    }
+
+    public synchronized boolean removerAnimal(long id) {
+        boolean removido = catalogo.removeIf(animal -> animal.getId() == id);
+        if (removido) {
+            salvarDados();
+        }
         return removido;
     }
 
-    public boolean editarAnimal(long id, String novoNomeComum, String novoNomeCientifico) {
-        Animal animal = buscarPorId(id);
-        if (animal == null) {
-            return false;
-        }
-
-        animal.setNomeComum(novoNomeComum);
-        animal.setNomeCientifico(novoNomeCientifico);
-        salvarDados();
-        return true;
+    private String normalizar(String texto) {
+        return Normalizer.normalize(texto, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                .toLowerCase(Locale.ROOT);
     }
 
     private void salvarDados() {

@@ -1,8 +1,13 @@
+package br.com.biosearch.model;
+
 public class Animal {
     private Long id;
     private String nomeComum;
     private String nomeCientifico;
     private Double nivelDeConfianca;
+
+    public Animal() {
+    }
 
     public Animal(Long id, String nomeComum, String nomeCientifico, Double nivelDeConfianca) {
         this.id = id;
@@ -41,16 +46,5 @@ public class Animal {
 
     public void setNivelDeConfianca(Double nivelDeConfianca) {
         this.nivelDeConfianca = nivelDeConfianca;
-    }
-
-    public void exibirFichaTecnica() {
-        System.out.println("+--------------------------------------+");
-        System.out.println("|          FICHA TECNICA BIOLOGICA     |");
-        System.out.println("+--------------------------------------+");
-        System.out.println("| ID: " + id);
-        System.out.println("| Nome comum: " + nomeComum);
-        System.out.println("| Nome cientifico: " + nomeCientifico);
-        System.out.println("| Nivel de confianca: " + nivelDeConfianca);
-        System.out.println("+--------------------------------------+");
     }
 }

@@ -4,6 +4,8 @@ out/
 !**/src/test/**/out/
 .kotlin
 target/
+fotos/
+observacoes.csv
 
 ### Eclipse ###
 .apt_generated
